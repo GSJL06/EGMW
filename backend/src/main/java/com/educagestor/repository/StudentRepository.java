@@ -193,14 +193,19 @@ public interface StudentRepository extends JpaRepository<Student, Long> {
 
     /**
      * Find students with upcoming birthdays
-     * 
-     * @param days number of days to look ahead
-     * @return list of students with birthdays in the next N days
+     *
+     * @param startDate start date for birthday search
+     * @param endDate end date for birthday search
+     * @return list of students with birthdays in the date range
      */
     @Query("SELECT s FROM Student s WHERE " +
-           "EXTRACT(MONTH FROM s.dateOfBirth) = EXTRACT(MONTH FROM CURRENT_DATE + :days) AND " +
-           "EXTRACT(DAY FROM s.dateOfBirth) = EXTRACT(DAY FROM CURRENT_DATE + :days)")
-    List<Student> findStudentsWithUpcomingBirthdays(@Param("days") int days);
+           "(EXTRACT(MONTH FROM s.dateOfBirth) = EXTRACT(MONTH FROM :startDate) AND " +
+           "EXTRACT(DAY FROM s.dateOfBirth) >= EXTRACT(DAY FROM :startDate)) OR " +
+           "(EXTRACT(MONTH FROM s.dateOfBirth) = EXTRACT(MONTH FROM :endDate) AND " +
+           "EXTRACT(DAY FROM s.dateOfBirth) <= EXTRACT(DAY FROM :endDate)) OR " +
+           "(EXTRACT(MONTH FROM s.dateOfBirth) > EXTRACT(MONTH FROM :startDate) AND " +
+           "EXTRACT(MONTH FROM s.dateOfBirth) < EXTRACT(MONTH FROM :endDate))")
+    List<Student> findStudentsWithUpcomingBirthdays(@Param("startDate") LocalDate startDate, @Param("endDate") LocalDate endDate);
 
     /**
      * Find students by age range
@@ -215,10 +220,10 @@ public interface StudentRepository extends JpaRepository<Student, Long> {
 
     /**
      * Find recently enrolled students
-     * 
+     *
      * @param days number of days to look back
      * @return list of students enrolled in the last N days
      */
-    @Query("SELECT s FROM Student s WHERE s.enrollmentDate >= CURRENT_DATE - :days")
-    List<Student> findRecentlyEnrolledStudents(@Param("days") int days);
+    @Query("SELECT s FROM Student s WHERE s.enrollmentDate >= :startDate")
+    List<Student> findRecentlyEnrolledStudents(@Param("startDate") LocalDate startDate);
 }

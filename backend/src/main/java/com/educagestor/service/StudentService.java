@@ -17,6 +17,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
+import java.util.List;
 import java.util.Optional;
 
 /**
@@ -276,8 +278,27 @@ public class StudentService {
     }
 
     /**
+     * Get students with upcoming birthdays
+     *
+     * @param days number of days to look ahead
+     * @return list of student DTOs with upcoming birthdays
+     */
+    @Transactional(readOnly = true)
+    public List<StudentDto> getStudentsWithUpcomingBirthdays(int days) {
+        log.debug("Getting students with birthdays in the next {} days", days);
+
+        LocalDate startDate = LocalDate.now();
+        LocalDate endDate = LocalDate.now().plusDays(days);
+
+        return studentRepository.findStudentsWithUpcomingBirthdays(startDate, endDate)
+                .stream()
+                .map(this::convertToDto)
+                .toList();
+    }
+
+    /**
      * Convert Student entity to StudentDto
-     * 
+     *
      * @param student the student entity
      * @return student DTO
      */

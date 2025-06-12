@@ -1,12 +1,10 @@
 server:
   port: 8080
-  servlet:
-    context-path: /api
 
 spring:
   application:
     name: educagestor360-backend
-  
+
   datasource:
     url: jdbc:postgresql://localhost:5432/educagestor360
     username: educagestor_user
@@ -18,7 +16,7 @@ spring:
       connection-timeout: 30000
       idle-timeout: 600000
       max-lifetime: 1800000
-  
+
   jpa:
     hibernate:
       ddl-auto: update
@@ -33,12 +31,12 @@ spring:
         order_inserts: true
         order_updates: true
     open-in-view: false
-  
+
   security:
     user:
       name: admin
       password: admin123
-  
+
   jackson:
     serialization:
       write-dates-as-timestamps: false
@@ -93,16 +91,16 @@ springdoc:
 # Application specific configuration
 app:
   cors:
-    allowed-origins: http://localhost:5173,http://localhost:3000
+    allowed-origins: http://localhost:5174,http://localhost:5173,http://localhost:3000
     allowed-methods: GET,POST,PUT,DELETE,OPTIONS
     allowed-headers: "*"
     allow-credentials: true
-  
+
   file-upload:
     max-file-size: 10MB
     max-request-size: 10MB
     upload-dir: uploads/
-  
+
   pagination:
     default-page-size: 20
     max-page-size: 100
@@ -113,10 +111,10 @@ spring:
   config:
     activate:
       on-profile: dev
-  
+
   datasource:
     url: jdbc:postgresql://localhost:5432/educagestor360_dev
-  
+
   jpa:
     show-sql: true
     hibernate:
@@ -133,18 +131,18 @@ spring:
   config:
     activate:
       on-profile: test
-  
+
   datasource:
     url: jdbc:h2:mem:testdb
     driver-class-name: org.h2.Driver
     username: sa
     password: password
-  
+
   jpa:
     hibernate:
       ddl-auto: create-drop
     database-platform: org.hibernate.dialect.H2Dialect
-  
+
   h2:
     console:
       enabled: true
@@ -155,7 +153,7 @@ spring:
   config:
     activate:
       on-profile: prod
-  
+
   jpa:
     show-sql: false
     hibernate:

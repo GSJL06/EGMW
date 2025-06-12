@@ -9,6 +9,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -171,12 +172,12 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
     /**
      * Find users created in the last N days
-     * 
+     *
      * @param days number of days to look back
      * @return list of recently created users
      */
-    @Query("SELECT u FROM User u WHERE u.createdAt >= CURRENT_DATE - :days")
-    List<User> findRecentUsers(@Param("days") int days);
+    @Query("SELECT u FROM User u WHERE u.createdAt >= :startDate")
+    List<User> findRecentUsers(@Param("startDate") LocalDateTime startDate);
 
     /**
      * Find users by multiple roles

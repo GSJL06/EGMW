@@ -272,6 +272,6 @@ public class Course extends BaseEntity {
         if (startDate == null || endDate == null) {
             return null;
         }
-        return startDate.until(endDate).getDays();
+        return (long) startDate.until(endDate).getDays();
     }
 }

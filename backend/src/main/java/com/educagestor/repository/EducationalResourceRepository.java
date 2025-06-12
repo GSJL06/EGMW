@@ -9,6 +9,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 /**
@@ -64,8 +65,8 @@ public interface EducationalResourceRepository extends JpaRepository<Educational
     long countByIsPublicFalse();
     long countByCourseIdAndResourceType(Long courseId, ResourceType resourceType);
 
-    @Query("SELECT r FROM EducationalResource r WHERE r.createdAt >= CURRENT_DATE - :days")
-    List<EducationalResource> findRecentResources(@Param("days") int days);
+    @Query("SELECT r FROM EducationalResource r WHERE r.createdAt >= :startDate")
+    List<EducationalResource> findRecentResources(@Param("startDate") LocalDateTime startDate);
 
     @Query("SELECT r FROM EducationalResource r WHERE r.course.institution.id = :institutionId")
     List<EducationalResource> findByInstitutionId(@Param("institutionId") Long institutionId);

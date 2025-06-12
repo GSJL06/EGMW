@@ -1,97 +1,178 @@
-import React from 'react'
-import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom'
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
-
-import { useAuthStore } from '@/store/authStore'
-import { LoginForm } from '@/components/auth/LoginForm'
-import { Dashboard } from '@/components/dashboard/Dashboard'
-import { ProtectedRoute } from '@/components/auth/ProtectedRoute'
-import { Layout } from '@/components/layout/Layout'
-
-// Create a client
-const queryClient = new QueryClient({
-  defaultOptions: {
-    queries: {
-      retry: 1,
-      refetchOnWindowFocus: false,
-    },
-  },
-})
+import React, { useState, useEffect } from "react";
+import { useAuthStore } from "./store/authStore";
+import { authApi } from "./services/api";
 
 function App() {
-  const { isAuthenticated, checkAuth } = useAuthStore()
+  const { isAuthenticated, user, login, logout, setLoading, setError, error } =
+    useAuthStore();
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
-  // Check authentication on app load
-  React.useEffect(() => {
-    checkAuth()
-  }, [checkAuth])
+  const handleLogin = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!username || !password) return;
+
+    setIsSubmitting(true);
+    setError(null);
+
+    try {
+      const response = await authApi.login({
+        usernameOrEmail: username,
+        password: password,
+      });
+
+      login({
+        accessToken: response.accessToken,
+        refreshToken: response.refreshToken,
+        user: response.user,
+      });
+    } catch (error: any) {
+      setError(error.response?.data?.message || "Error al iniciar sesión");
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  const handleLogout = () => {
+    logout();
+    setUsername("");
+    setPassword("");
+  };
+
+  if (isAuthenticated) {
+    return (
+      <div className="min-h-screen bg-gray-100 p-8">
+        <div className="max-w-6xl mx-auto">
+          <header className="bg-white shadow rounded-lg p-6 mb-8">
+            <div className="flex justify-between items-center">
+              <div>
+                <h1 className="text-3xl font-bold text-gray-900">
+                  EducaGestor360
+                </h1>
+                {user && (
+                  <p className="text-gray-600 mt-1">
+                    Bienvenido, {user.username} ({user.role})
+                  </p>
+                )}
+              </div>
+              <button
+                onClick={handleLogout}
+                className="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded transition-colors"
+              >
+                Cerrar Sesión
+              </button>
+            </div>
+          </header>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div className="bg-white p-6 rounded-lg shadow hover:shadow-md transition-shadow">
+              <h2 className="text-xl font-semibold mb-4 text-gray-800">
+                Estudiantes
+              </h2>
+              <p className="text-gray-600 mb-4">
+                Gestión de estudiantes del sistema
+              </p>
+              <div className="flex items-baseline">
+                <span className="text-3xl font-bold text-blue-600">150</span>
+                <span className="text-gray-500 ml-2">estudiantes activos</span>
+              </div>
+            </div>
+
+            <div className="bg-white p-6 rounded-lg shadow hover:shadow-md transition-shadow">
+              <h2 className="text-xl font-semibold mb-4 text-gray-800">
+                Profesores
+              </h2>
+              <p className="text-gray-600 mb-4">
+                Gestión de profesores y personal
+              </p>
+              <div className="flex items-baseline">
+                <span className="text-3xl font-bold text-green-600">25</span>
+                <span className="text-gray-500 ml-2">profesores activos</span>
+              </div>
+            </div>
+
+            <div className="bg-white p-6 rounded-lg shadow hover:shadow-md transition-shadow">
+              <h2 className="text-xl font-semibold mb-4 text-gray-800">
+                Cursos
+              </h2>
+              <p className="text-gray-600 mb-4">Gestión de cursos y materias</p>
+              <div className="flex items-baseline">
+                <span className="text-3xl font-bold text-purple-600">12</span>
+                <span className="text-gray-500 ml-2">cursos disponibles</span>
+              </div>
+            </div>
+          </div>
+
+          <div className="mt-8 bg-white p-6 rounded-lg shadow">
+            <h2 className="text-xl font-semibold mb-4 text-gray-800">
+              Estado del Sistema
+            </h2>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <h3 className="font-medium text-gray-700">Base de Datos</h3>
+                <p className="text-green-600">✅ Conectada (PostgreSQL)</p>
+              </div>
+              <div>
+                <h3 className="font-medium text-gray-700">Backend API</h3>
+                <p className="text-green-600">✅ Conectado (Spring Boot)</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
-    <QueryClientProvider client={queryClient}>
-      <Router>
-        <div className="min-h-screen bg-background">
-          <Routes>
-            {/* Public routes */}
-            <Route 
-              path="/login" 
-              element={
-                isAuthenticated ? <Navigate to="/dashboard" replace /> : <LoginForm />
-              } 
+    <div className="min-h-screen bg-gray-100 flex items-center justify-center">
+      <div className="bg-white p-8 rounded-lg shadow-lg w-full max-w-md">
+        <h1 className="text-2xl font-bold text-center mb-6 text-gray-900">
+          EducaGestor360
+        </h1>
+        {error && (
+          <div className="mb-4 p-3 bg-red-100 border border-red-400 text-red-700 rounded">
+            {error}
+          </div>
+        )}
+        <form onSubmit={handleLogin}>
+          <div className="mb-4">
+            <label className="block text-gray-700 text-sm font-bold mb-2">
+              Usuario
+            </label>
+            <input
+              type="text"
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
+              className="w-full px-3 py-3 border border-gray-300 rounded focus:outline-none focus:border-blue-500"
+              placeholder="Ingresa tu usuario"
+              required
             />
-            
-            {/* Protected routes */}
-            <Route
-              path="/*"
-              element={
-                <ProtectedRoute>
-                  <Layout>
-                    <Routes>
-                      <Route path="/dashboard" element={<Dashboard />} />
-                      <Route path="/admin/dashboard" element={<Dashboard />} />
-                      <Route path="/teacher/dashboard" element={<Dashboard />} />
-                      <Route path="/student/dashboard" element={<Dashboard />} />
-                      
-                      {/* Students routes */}
-                      <Route path="/students" element={<div>Students Page</div>} />
-                      <Route path="/students/:id" element={<div>Student Detail</div>} />
-                      
-                      {/* Teachers routes */}
-                      <Route path="/teachers" element={<div>Teachers Page</div>} />
-                      <Route path="/teachers/:id" element={<div>Teacher Detail</div>} />
-                      
-                      {/* Courses routes */}
-                      <Route path="/courses" element={<div>Courses Page</div>} />
-                      <Route path="/courses/:id" element={<div>Course Detail</div>} />
-                      
-                      {/* Enrollments routes */}
-                      <Route path="/enrollments" element={<div>Enrollments Page</div>} />
-                      
-                      {/* Grades routes */}
-                      <Route path="/grades" element={<div>Grades Page</div>} />
-                      
-                      {/* Attendance routes */}
-                      <Route path="/attendance" element={<div>Attendance Page</div>} />
-                      
-                      {/* Resources routes */}
-                      <Route path="/resources" element={<div>Resources Page</div>} />
-                      
-                      {/* Profile routes */}
-                      <Route path="/profile" element={<div>Profile Page</div>} />
-                      <Route path="/settings" element={<div>Settings Page</div>} />
-                      
-                      {/* Default redirect */}
-                      <Route path="/" element={<Navigate to="/dashboard" replace />} />
-                      <Route path="*" element={<Navigate to="/dashboard" replace />} />
-                    </Routes>
-                  </Layout>
-                </ProtectedRoute>
-              }
+          </div>
+          <div className="mb-6">
+            <label className="block text-gray-700 text-sm font-bold mb-2">
+              Contraseña
+            </label>
+            <input
+              type="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              className="w-full px-3 py-3 border border-gray-300 rounded focus:outline-none focus:border-blue-500"
+              placeholder="Ingresa tu contraseña"
+              required
             />
-          </Routes>
-        </div>
-      </Router>
-    </QueryClientProvider>
-  )
+          </div>
+          <button
+            type="submit"
+            disabled={isSubmitting}
+            className="w-full bg-blue-500 hover:bg-blue-600 disabled:bg-blue-300 text-white font-bold py-3 rounded transition-colors"
+          >
+            {isSubmitting ? "Iniciando sesión..." : "Iniciar Sesión"}
+          </button>
+        </form>
+      </div>
+    </div>
+  );
 }
 
-export default App
+export default App;

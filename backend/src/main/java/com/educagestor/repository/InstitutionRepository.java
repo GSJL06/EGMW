@@ -8,6 +8,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -135,8 +136,8 @@ public interface InstitutionRepository extends JpaRepository<Institution, Long> 
      * @param days number of days to look back
      * @return list of recently created institutions
      */
-    @Query("SELECT i FROM Institution i WHERE i.createdAt >= CURRENT_DATE - :days")
-    List<Institution> findRecentInstitutions(@Param("days") int days);
+    @Query("SELECT i FROM Institution i WHERE i.createdAt >= :startDate")
+    List<Institution> findRecentInstitutions(@Param("startDate") LocalDateTime startDate);
 
     /**
      * Get institution statistics

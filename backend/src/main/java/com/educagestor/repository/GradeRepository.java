@@ -62,8 +62,8 @@ public interface GradeRepository extends JpaRepository<Grade, Long> {
     @Query("SELECT COUNT(g) FROM Grade g WHERE g.enrollment.course.id = :courseId")
     long countByCourseId(@Param("courseId") Long courseId);
 
-    @Query("SELECT g FROM Grade g WHERE g.gradeDate >= CURRENT_DATE - :days")
-    List<Grade> findRecentGrades(@Param("days") int days);
+    @Query("SELECT g FROM Grade g WHERE g.gradeDate >= :startDate")
+    List<Grade> findRecentGrades(@Param("startDate") LocalDate startDate);
 
     @Query("SELECT g FROM Grade g WHERE g.enrollment.course.teacher.id = :teacherId")
     List<Grade> findByTeacherId(@Param("teacherId") Long teacherId);

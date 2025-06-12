@@ -1,0 +1,9 @@
+@echo off
+echo Starting EducaGestor360 Backend...
+echo.
+echo Checking Java version...
+java -version
+echo.
+echo Starting Spring Boot application...
+mvn spring-boot:run -DskipTests
+pause

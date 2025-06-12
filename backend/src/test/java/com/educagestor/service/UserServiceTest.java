@@ -49,13 +49,13 @@ class UserServiceTest {
     @BeforeEach
     void setUp() {
         testUser = User.builder()
-                .id(1L)
                 .username("testuser")
                 .email("test@example.com")
                 .password("encodedPassword")
                 .role(UserRole.STUDENT)
                 .active(true)
                 .build();
+        testUser.setId(1L);
         testUser.setCreatedAt(LocalDateTime.now());
         testUser.setUpdatedAt(LocalDateTime.now());
 
@@ -308,7 +308,7 @@ class UserServiceTest {
 
         // Then
         verify(userRepository).findById(1L);
-        verify(passwordEncoder).matches(currentPassword, testUser.getPassword());
+        verify(passwordEncoder).matches(currentPassword, "encodedPassword");
         verify(passwordEncoder).encode(newPassword);
         verify(userRepository).save(any(User.class));
     }

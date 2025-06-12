@@ -45,8 +45,8 @@ public interface EnrollmentRepository extends JpaRepository<Enrollment, Long> {
     long countByStudentIdAndStatus(Long studentId, EnrollmentStatus status);
     long countByCourseIdAndStatus(Long courseId, EnrollmentStatus status);
 
-    @Query("SELECT e FROM Enrollment e WHERE e.enrollmentDate >= CURRENT_DATE - :days")
-    List<Enrollment> findRecentEnrollments(@Param("days") int days);
+    @Query("SELECT e FROM Enrollment e WHERE e.enrollmentDate >= :startDate")
+    List<Enrollment> findRecentEnrollments(@Param("startDate") LocalDate startDate);
 
     @Query("SELECT e FROM Enrollment e WHERE e.student.institution.id = :institutionId")
     List<Enrollment> findByInstitutionId(@Param("institutionId") Long institutionId);

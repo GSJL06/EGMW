@@ -50,7 +50,7 @@ public class JwtTokenProvider {
 
     /**
      * Generate access token for authenticated user
-     * 
+     *
      * @param authentication the authentication object
      * @return JWT access token
      */
@@ -59,11 +59,11 @@ public class JwtTokenProvider {
         Date expiryDate = new Date(System.currentTimeMillis() + accessTokenExpirationTime);
 
         String token = Jwts.builder()
-                .setSubject(userPrincipal.getUsername())
-                .setIssuedAt(new Date())
-                .setExpiration(expiryDate)
+                .subject(userPrincipal.getUsername())
+                .issuedAt(new Date())
+                .expiration(expiryDate)
                 .claim("type", "access")
-                .signWith(secretKey, SignatureAlgorithm.HS512)
+                .signWith(secretKey)
                 .compact();
 
         log.debug("Generated access token for user: {}", userPrincipal.getUsername());
@@ -72,7 +72,7 @@ public class JwtTokenProvider {
 
     /**
      * Generate refresh token for authenticated user
-     * 
+     *
      * @param authentication the authentication object
      * @return JWT refresh token
      */
@@ -81,11 +81,11 @@ public class JwtTokenProvider {
         Date expiryDate = new Date(System.currentTimeMillis() + refreshTokenExpirationTime);
 
         String token = Jwts.builder()
-                .setSubject(userPrincipal.getUsername())
-                .setIssuedAt(new Date())
-                .setExpiration(expiryDate)
+                .subject(userPrincipal.getUsername())
+                .issuedAt(new Date())
+                .expiration(expiryDate)
                 .claim("type", "refresh")
-                .signWith(secretKey, SignatureAlgorithm.HS512)
+                .signWith(secretKey)
                 .compact();
 
         log.debug("Generated refresh token for user: {}", userPrincipal.getUsername());
@@ -94,68 +94,68 @@ public class JwtTokenProvider {
 
     /**
      * Get username from JWT token
-     * 
+     *
      * @param token the JWT token
      * @return username from token
      */
     public String getUsernameFromToken(String token) {
-        Claims claims = Jwts.parserBuilder()
-                .setSigningKey(secretKey)
+        Claims claims = Jwts.parser()
+                .verifyWith(secretKey)
                 .build()
-                .parseClaimsJws(token)
-                .getBody();
+                .parseSignedClaims(token)
+                .getPayload();
 
         return claims.getSubject();
     }
 
     /**
      * Get token type from JWT token
-     * 
+     *
      * @param token the JWT token
      * @return token type (access or refresh)
      */
     public String getTokenType(String token) {
-        Claims claims = Jwts.parserBuilder()
-                .setSigningKey(secretKey)
+        Claims claims = Jwts.parser()
+                .verifyWith(secretKey)
                 .build()
-                .parseClaimsJws(token)
-                .getBody();
+                .parseSignedClaims(token)
+                .getPayload();
 
         return claims.get("type", String.class);
     }
 
     /**
      * Get expiration date from JWT token
-     * 
+     *
      * @param token the JWT token
      * @return expiration date
      */
     public Date getExpirationDateFromToken(String token) {
-        Claims claims = Jwts.parserBuilder()
-                .setSigningKey(secretKey)
+        Claims claims = Jwts.parser()
+                .verifyWith(secretKey)
                 .build()
-                .parseClaimsJws(token)
-                .getBody();
+                .parseSignedClaims(token)
+                .getPayload();
 
         return claims.getExpiration();
     }
 
     /**
      * Validate JWT token
-     * 
+     *
      * @param token the JWT token to validate
      * @return true if token is valid
      */
     public boolean validateToken(String token) {
         try {
-            Jwts.parserBuilder()
-                    .setSigningKey(secretKey)
+            Jwts.parser()
+                    .verifyWith(secretKey)
                     .build()
-                    .parseClaimsJws(token);
-            
+                    .parseSignedClaims(token);
+
             log.debug("JWT token is valid");
             return true;
-            
+
         } catch (SecurityException ex) {
             log.error("Invalid JWT signature: {}", ex.getMessage());
         } catch (MalformedJwtException ex) {
@@ -167,7 +167,7 @@ public class JwtTokenProvider {
         } catch (IllegalArgumentException ex) {
             log.error("JWT claims string is empty: {}", ex.getMessage());
         }
-        
+
         return false;
     }
 

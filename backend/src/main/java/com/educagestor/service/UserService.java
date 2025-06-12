@@ -15,6 +15,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -297,13 +298,30 @@ public class UserService implements UserDetailsService {
 
     /**
      * Get user count by role
-     * 
+     *
      * @param role the user role
      * @return count of users with the role
      */
     @Transactional(readOnly = true)
     public long countByRole(UserRole role) {
         return userRepository.countByRole(role);
+    }
+
+    /**
+     * Get recently created users
+     *
+     * @param days number of days to look back
+     * @return list of recently created user DTOs
+     */
+    @Transactional(readOnly = true)
+    public List<UserDto> getRecentUsers(int days) {
+        log.debug("Getting users created in the last {} days", days);
+
+        LocalDateTime startDate = LocalDateTime.now().minusDays(days);
+        return userRepository.findRecentUsers(startDate)
+                .stream()
+                .map(this::convertToDto)
+                .toList();
     }
 
     /**

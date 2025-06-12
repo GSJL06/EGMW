@@ -56,8 +56,8 @@ public interface TeacherRepository extends JpaRepository<Teacher, Long> {
     long countByStatus(TeacherStatus status);
     long countByInstitutionIdAndStatus(Long institutionId, TeacherStatus status);
 
-    @Query("SELECT t FROM Teacher t WHERE t.hireDate >= CURRENT_DATE - :days")
-    List<Teacher> findRecentlyHiredTeachers(@Param("days") int days);
+    @Query("SELECT t FROM Teacher t WHERE t.hireDate >= :startDate")
+    List<Teacher> findRecentlyHiredTeachers(@Param("startDate") LocalDate startDate);
 
     @Query("SELECT t FROM Teacher t LEFT JOIN t.courses c GROUP BY t ORDER BY COUNT(c) DESC")
     Page<Teacher> findTeachersOrderedByCourseCount(Pageable pageable);
