@@ -141,6 +141,10 @@ frontend/.yarn-integrity
 frontend/.cache
 frontend/.parcel-cache
 
+# Vite cache and build files
+frontend/.vite-cache/
+frontend/.vite/
+
 # Next.js build output
 frontend/.next
 
