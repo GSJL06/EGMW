@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useAuthStore } from "./store/authStore";
 import { authApi } from "./services/api";
+import { StudentList } from "./components/students/StudentList";
 
 function App() {
   const { isAuthenticated, user, login, logout, setLoading, setError, error } =
@@ -8,6 +9,7 @@ function App() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [currentView, setCurrentView] = useState("dashboard");
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -65,60 +67,173 @@ function App() {
             </div>
           </header>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <div className="bg-white p-6 rounded-lg shadow hover:shadow-md transition-shadow">
-              <h2 className="text-xl font-semibold mb-4 text-gray-800">
+          {/* Navigation */}
+          <nav className="bg-white shadow rounded-lg p-4 mb-8">
+            <div className="flex space-x-4">
+              <button
+                onClick={() => setCurrentView("dashboard")}
+                className={`px-4 py-2 rounded-lg transition-colors ${
+                  currentView === "dashboard"
+                    ? "bg-blue-600 text-white"
+                    : "text-gray-600 hover:bg-gray-100"
+                }`}
+              >
+                Dashboard
+              </button>
+              <button
+                onClick={() => setCurrentView("students")}
+                className={`px-4 py-2 rounded-lg transition-colors ${
+                  currentView === "students"
+                    ? "bg-blue-600 text-white"
+                    : "text-gray-600 hover:bg-gray-100"
+                }`}
+              >
                 Estudiantes
-              </h2>
-              <p className="text-gray-600 mb-4">
-                Gestión de estudiantes del sistema
-              </p>
-              <div className="flex items-baseline">
-                <span className="text-3xl font-bold text-blue-600">150</span>
-                <span className="text-gray-500 ml-2">estudiantes activos</span>
-              </div>
-            </div>
-
-            <div className="bg-white p-6 rounded-lg shadow hover:shadow-md transition-shadow">
-              <h2 className="text-xl font-semibold mb-4 text-gray-800">
+              </button>
+              <button
+                onClick={() => setCurrentView("teachers")}
+                className={`px-4 py-2 rounded-lg transition-colors ${
+                  currentView === "teachers"
+                    ? "bg-blue-600 text-white"
+                    : "text-gray-600 hover:bg-gray-100"
+                }`}
+              >
                 Profesores
-              </h2>
-              <p className="text-gray-600 mb-4">
-                Gestión de profesores y personal
-              </p>
-              <div className="flex items-baseline">
-                <span className="text-3xl font-bold text-green-600">25</span>
-                <span className="text-gray-500 ml-2">profesores activos</span>
-              </div>
-            </div>
-
-            <div className="bg-white p-6 rounded-lg shadow hover:shadow-md transition-shadow">
-              <h2 className="text-xl font-semibold mb-4 text-gray-800">
+              </button>
+              <button
+                onClick={() => setCurrentView("courses")}
+                className={`px-4 py-2 rounded-lg transition-colors ${
+                  currentView === "courses"
+                    ? "bg-blue-600 text-white"
+                    : "text-gray-600 hover:bg-gray-100"
+                }`}
+              >
                 Cursos
-              </h2>
-              <p className="text-gray-600 mb-4">Gestión de cursos y materias</p>
-              <div className="flex items-baseline">
-                <span className="text-3xl font-bold text-purple-600">12</span>
-                <span className="text-gray-500 ml-2">cursos disponibles</span>
-              </div>
+              </button>
             </div>
-          </div>
+          </nav>
 
-          <div className="mt-8 bg-white p-6 rounded-lg shadow">
-            <h2 className="text-xl font-semibold mb-4 text-gray-800">
-              Estado del Sistema
-            </h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div>
-                <h3 className="font-medium text-gray-700">Base de Datos</h3>
-                <p className="text-green-600">✅ Conectada (PostgreSQL)</p>
+          {/* Main Content */}
+          {currentView === "dashboard" && (
+            <>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div
+                  className="bg-white p-6 rounded-lg shadow hover:shadow-md transition-shadow cursor-pointer"
+                  onClick={() => setCurrentView("students")}
+                >
+                  <h2 className="text-xl font-semibold mb-4 text-gray-800">
+                    Estudiantes
+                  </h2>
+                  <p className="text-gray-600 mb-4">
+                    Gestión de estudiantes del sistema
+                  </p>
+                  <div className="flex items-baseline">
+                    <span className="text-3xl font-bold text-blue-600">
+                      150
+                    </span>
+                    <span className="text-gray-500 ml-2">
+                      estudiantes activos
+                    </span>
+                  </div>
+                  <div className="mt-4">
+                    <span className="text-blue-600 text-sm font-medium">
+                      Clic para gestionar →
+                    </span>
+                  </div>
+                </div>
+
+                <div className="bg-white p-6 rounded-lg shadow hover:shadow-md transition-shadow cursor-pointer">
+                  <h2 className="text-xl font-semibold mb-4 text-gray-800">
+                    Profesores
+                  </h2>
+                  <p className="text-gray-600 mb-4">
+                    Gestión de profesores y personal
+                  </p>
+                  <div className="flex items-baseline">
+                    <span className="text-3xl font-bold text-green-600">
+                      25
+                    </span>
+                    <span className="text-gray-500 ml-2">
+                      profesores activos
+                    </span>
+                  </div>
+                  <div className="mt-4">
+                    <span className="text-green-600 text-sm font-medium">
+                      Próximamente →
+                    </span>
+                  </div>
+                </div>
+
+                <div className="bg-white p-6 rounded-lg shadow hover:shadow-md transition-shadow cursor-pointer">
+                  <h2 className="text-xl font-semibold mb-4 text-gray-800">
+                    Cursos
+                  </h2>
+                  <p className="text-gray-600 mb-4">
+                    Gestión de cursos y materias
+                  </p>
+                  <div className="flex items-baseline">
+                    <span className="text-3xl font-bold text-purple-600">
+                      12
+                    </span>
+                    <span className="text-gray-500 ml-2">
+                      cursos disponibles
+                    </span>
+                  </div>
+                  <div className="mt-4">
+                    <span className="text-purple-600 text-sm font-medium">
+                      Próximamente →
+                    </span>
+                  </div>
+                </div>
               </div>
-              <div>
-                <h3 className="font-medium text-gray-700">Backend API</h3>
-                <p className="text-green-600">✅ Conectado (Spring Boot)</p>
+
+              <div className="mt-8 bg-white p-6 rounded-lg shadow">
+                <h2 className="text-xl font-semibold mb-4 text-gray-800">
+                  Estado del Sistema
+                </h2>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                    <h3 className="font-medium text-gray-700">Base de Datos</h3>
+                    <p className="text-green-600">✅ Conectada (PostgreSQL)</p>
+                  </div>
+                  <div>
+                    <h3 className="font-medium text-gray-700">Backend API</h3>
+                    <p className="text-green-600">✅ Conectado (Spring Boot)</p>
+                  </div>
+                </div>
               </div>
+            </>
+          )}
+
+          {currentView === "students" && (
+            <div>
+              <h2>Gestión de Estudiantes - Debug</h2>
+              <p>Current view: {currentView}</p>
+              <StudentList />
             </div>
-          </div>
+          )}
+
+          {currentView === "teachers" && (
+            <div className="bg-white p-8 rounded-lg shadow text-center">
+              <h2 className="text-2xl font-bold text-gray-900 mb-4">
+                Gestión de Profesores
+              </h2>
+              <p className="text-gray-600">
+                Esta funcionalidad estará disponible próximamente.
+              </p>
+            </div>
+          )}
+
+          {currentView === "courses" && (
+            <div className="bg-white p-8 rounded-lg shadow text-center">
+              <h2 className="text-2xl font-bold text-gray-900 mb-4">
+                Gestión de Cursos
+              </h2>
+              <p className="text-gray-600">
+                Esta funcionalidad estará disponible próximamente.
+              </p>
+            </div>
+          )}
         </div>
       </div>
     );

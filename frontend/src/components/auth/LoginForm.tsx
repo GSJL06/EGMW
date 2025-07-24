@@ -1,27 +1,33 @@
-import React, { useState } from 'react'
-import { useNavigate } from 'react-router-dom'
-import { useForm } from 'react-hook-form'
-import { zodResolver } from '@hookform/resolvers/zod'
-import * as z from 'zod'
-import { Eye, EyeOff, LogIn, Loader2 } from 'lucide-react'
+import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import * as z from "zod";
+import { Eye, EyeOff, LogIn, Loader2 } from "lucide-react";
 
-import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { useAuthStore } from '@/store/authStore'
-import { authApi } from '@/services/api'
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { useAuthStore } from "@/store/authStore";
+import { authApi } from "@/services/api";
 
 const loginSchema = z.object({
-  usernameOrEmail: z.string().min(1, 'Usuario o email es requerido'),
-  password: z.string().min(1, 'Contraseña es requerida'),
-})
+  usernameOrEmail: z.string().min(1, "Usuario o email es requerido"),
+  password: z.string().min(1, "Contraseña es requerida"),
+});
 
-type LoginFormData = z.infer<typeof loginSchema>
+type LoginFormData = z.infer<typeof loginSchema>;
 
 export const LoginForm: React.FC = () => {
-  const navigate = useNavigate()
-  const { login, setLoading, setError, isLoading, error } = useAuthStore()
-  const [showPassword, setShowPassword] = useState(false)
+  const navigate = useNavigate();
+  const { login, setLoading, setError, isLoading, error } = useAuthStore();
+  const [showPassword, setShowPassword] = useState(false);
 
   const {
     register,
@@ -29,45 +35,45 @@ export const LoginForm: React.FC = () => {
     formState: { errors },
   } = useForm<LoginFormData>({
     resolver: zodResolver(loginSchema),
-  })
+  });
 
   const onSubmit = async (data: LoginFormData) => {
     try {
-      setLoading(true)
-      setError(null)
+      setLoading(true);
+      setError(null);
 
-      const response = await authApi.login(data)
-      
+      const response = await authApi.login(data);
+
       login({
         accessToken: response.accessToken,
         refreshToken: response.refreshToken,
         user: response.user,
-      })
+      });
 
       // Redirect based on user role
       switch (response.user.role) {
-        case 'ADMIN':
-          navigate('/admin/dashboard')
-          break
-        case 'TEACHER':
-          navigate('/teacher/dashboard')
-          break
-        case 'STUDENT':
-          navigate('/student/dashboard')
-          break
+        case "ADMIN":
+          navigate("/admin/dashboard");
+          break;
+        case "TEACHER":
+          navigate("/teacher/dashboard");
+          break;
+        case "STUDENT":
+          navigate("/student/dashboard");
+          break;
         default:
-          navigate('/dashboard')
+          navigate("/dashboard");
       }
     } catch (error: any) {
-      console.error('Login error:', error)
+      console.error("Login error:", error);
       setError(
-        error.response?.data?.message || 
-        'Error al iniciar sesión. Verifica tus credenciales.'
-      )
+        error.response?.data?.message ||
+          "Error al iniciar sesión. Verifica tus credenciales."
+      );
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
-  }
+  };
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-100 p-4">
@@ -93,11 +99,13 @@ export const LoginForm: React.FC = () => {
                 id="usernameOrEmail"
                 type="text"
                 placeholder="Ingresa tu usuario o email"
-                {...register('usernameOrEmail')}
-                className={errors.usernameOrEmail ? 'border-red-500' : ''}
+                {...register("usernameOrEmail")}
+                className={errors.usernameOrEmail ? "border-red-500" : ""}
               />
               {errors.usernameOrEmail && (
-                <p className="text-sm text-red-500">{errors.usernameOrEmail.message}</p>
+                <p className="text-sm text-red-500">
+                  {errors.usernameOrEmail.message}
+                </p>
               )}
             </div>
 
@@ -108,10 +116,10 @@ export const LoginForm: React.FC = () => {
               <div className="relative">
                 <Input
                   id="password"
-                  type={showPassword ? 'text' : 'password'}
+                  type={showPassword ? "text" : "password"}
                   placeholder="Ingresa tu contraseña"
-                  {...register('password')}
-                  className={errors.password ? 'border-red-500 pr-10' : 'pr-10'}
+                  {...register("password")}
+                  className={errors.password ? "border-red-500 pr-10" : "pr-10"}
                 />
                 <button
                   type="button"
@@ -126,7 +134,9 @@ export const LoginForm: React.FC = () => {
                 </button>
               </div>
               {errors.password && (
-                <p className="text-sm text-red-500">{errors.password.message}</p>
+                <p className="text-sm text-red-500">
+                  {errors.password.message}
+                </p>
               )}
             </div>
 
@@ -136,11 +146,7 @@ export const LoginForm: React.FC = () => {
               </div>
             )}
 
-            <Button
-              type="submit"
-              className="w-full"
-              disabled={isLoading}
-            >
+            <Button type="submit" className="w-full" disabled={isLoading}>
               {isLoading ? (
                 <>
                   <Loader2 className="w-4 h-4 mr-2 animate-spin" />
@@ -157,9 +163,9 @@ export const LoginForm: React.FC = () => {
 
           <div className="mt-6 text-center">
             <p className="text-sm text-gray-600">
-              ¿No tienes una cuenta?{' '}
+              ¿No tienes una cuenta?{" "}
               <button
-                onClick={() => navigate('/register')}
+                onClick={() => navigate("/register")}
                 className="text-primary hover:underline font-medium"
               >
                 Regístrate aquí
@@ -169,7 +175,7 @@ export const LoginForm: React.FC = () => {
 
           <div className="mt-4 text-center">
             <button
-              onClick={() => navigate('/forgot-password')}
+              onClick={() => navigate("/forgot-password")}
               className="text-sm text-gray-600 hover:text-primary hover:underline"
             >
               ¿Olvidaste tu contraseña?
@@ -178,5 +184,5 @@ export const LoginForm: React.FC = () => {
         </CardContent>
       </Card>
     </div>
-  )
-}
+  );
+};

@@ -139,9 +139,72 @@ npm run build
 
 ### 🔑 Credenciales por defecto
 
+#### Base de datos
+
 - **PgAdmin**: `admin@admin.com` / `admin`
 - **PostgreSQL**: `educagestor` / `educagestor123`
 - **Base de datos**: `educagestor`
+
+#### Sistema EducaGestor360
+
+- **Administrador**: `admin` / `admin123`
+
+## 🎯 Estado Actual del Desarrollo
+
+### ✅ Funcionalidades Implementadas
+
+#### Backend (Spring Boot)
+
+- ✅ **Autenticación JWT**: Login seguro con tokens de acceso y refresh
+- ✅ **Gestión de Usuarios**: CRUD completo con roles y permisos
+- ✅ **Gestión de Estudiantes**: Registro, consulta, actualización y eliminación
+- ✅ **Gestión de Profesores**: CRUD completo con especialización
+- ✅ **Gestión de Cursos**: Administración completa de cursos académicos
+- ✅ **API REST**: Endpoints documentados con Swagger/OpenAPI
+- ✅ **Validación de Datos**: Validaciones robustas en todas las entidades
+- ✅ **Manejo de Errores**: Respuestas consistentes y manejo global de excepciones
+- ✅ **Paginación**: Soporte para consultas paginadas en todas las listas
+- ✅ **Base de Datos**: Esquema completo con relaciones y constraints
+
+#### Frontend (React + TypeScript)
+
+- ✅ **Interfaz de Login**: Formulario de autenticación con validación
+- ✅ **Dashboard Principal**: Navegación entre módulos
+- ✅ **Gestión de Estudiantes**: Lista, búsqueda y visualización de estudiantes
+- ✅ **Componentes UI**: Implementación con ShadCN/UI y Tailwind CSS
+- ✅ **Servicios API**: Cliente HTTP configurado con Axios
+- ✅ **Manejo de Estado**: Autenticación y estado global
+- ✅ **Enrutamiento**: Navegación protegida por roles
+- ✅ **Responsive Design**: Interfaz adaptable a diferentes dispositivos
+
+### 🚧 En Desarrollo
+
+- 🔄 **Formularios de Creación**: Estudiantes, profesores y cursos
+- 🔄 **Gestión de Matrículas**: Sistema de inscripción
+- 🔄 **Sistema de Calificaciones**: Registro y consulta de notas
+- 🔄 **Control de Asistencia**: Registro diario
+- 🔄 **Recursos Educativos**: Gestión de materiales
+
+## 🧪 Testing
+
+### Datos de Prueba
+
+El sistema incluye datos de prueba para facilitar el desarrollo:
+
+- **Usuarios**: Administrador predefinido
+- **Estudiantes**: Juan Pérez (EST001), María González (EST002)
+
+### Ejecutar Pruebas
+
+```bash
+# Backend
+cd backend
+mvn test
+
+# Frontend
+cd frontend
+npm run test
+```
 
 ## Licencia
 
